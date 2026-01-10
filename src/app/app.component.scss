@@ -1,5 +1,5 @@
 @use 'main' as *;
-
+@use "sass:color";
 :host {
   display: flex;
   flex-direction: column;

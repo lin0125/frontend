@@ -1,24 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // 合併導入
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './service/auth.service';
-import { RouterModule, RouterOutlet } from '@angular/router'; // **導入 RouterModule！**
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet],  // **加上 RouterModule**
+  imports: [CommonModule, RouterModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   isNavClosed = false;
-  isLoggedIn = false; // 追蹤登入狀態
+  isLoggedIn = false;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.isLoggedIn().subscribe(status => {
+    // 修正這裡：使用 isLoggedIn$ (與你的 service 定義一致)
+    this.authService.isLoggedIn$.subscribe((status: boolean) => {
       this.isLoggedIn = status;
     });
   }

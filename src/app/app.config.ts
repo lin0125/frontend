@@ -1,15 +1,14 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-
-// 🪄 加這兩行
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
+// 必須加入以下 import
+import { SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideHttpClient(),
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -17,10 +16,10 @@ export const appConfig: ApplicationConfig = {
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('你的GOOGLE_CLIENT_ID.apps.googleusercontent.com')
+            provider: new GoogleLoginProvider('868530418816-q048np79b82kem0ae6j9avqe9bsrpeov.apps.googleusercontent.com')
           }
         ],
-        onError: (err) => console.error(err)
+        onError: (err: any) => console.error(err) // 指定 err 類型
       } as SocialAuthServiceConfig,
     }
   ]
