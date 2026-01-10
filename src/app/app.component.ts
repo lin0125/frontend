@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core'; // 合併導入
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet, Router } from '@angular/router'; // 注入 Router
 import { AuthService } from './service/auth.service';
 
 @Component({
@@ -14,10 +14,13 @@ export class AppComponent implements OnInit {
   isNavClosed = false;
   isLoggedIn = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router // 注入 Router 以便登出後跳轉
+  ) {}
 
   ngOnInit() {
-    // 修正這裡：使用 isLoggedIn$ (與你的 service 定義一致)
+    // 訂閱登入狀態
     this.authService.isLoggedIn$.subscribe((status: boolean) => {
       this.isLoggedIn = status;
     });
@@ -25,5 +28,11 @@ export class AppComponent implements OnInit {
 
   toggleNav() {
     this.isNavClosed = !this.isNavClosed;
+  }
+
+  // 修正點：新增 logout 方法
+  logout() {
+    this.authService.logout(); // 清除 Token 並更新狀態
+    this.router.navigate(['/login']); // 跳轉回登入頁面
   }
 }

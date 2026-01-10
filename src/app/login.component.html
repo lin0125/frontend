@@ -1,8 +1,7 @@
-<div class="login-container">
+<div class="login-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh;">
   <h2>AI-COS 系統登入</h2>
-  <asl-google-signin-button type="standard"></asl-google-signin-button>
-  <p>請先進行身分驗證</p>
-  <button class="google-login-btn" (click)="handleGoogleLogin()">
-    <img src="assets/google-icon.png" alt=""> 使用 Google 帳號登入
-  </button>
-</div>
+  <p>請使用 Google 帳號進行身分驗證</p>
+  
+  <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+
+  </div>

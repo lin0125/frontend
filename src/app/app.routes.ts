@@ -7,19 +7,11 @@ import { LoginComponent } from './login.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'history/:dataset', component: HistoryComponent, 
-    data: {
-      prerender: false // 設定為 false 以避免預渲染
-    }
-  },
   { path: 'history', component: HistoryComponent },
-  {
-    path: 'chiller',
-    loadComponent: () => import('./chiller-control/chiller-control.component').then(m => m.ChillerControlComponent)
-  },
-  { path: '**', redirectTo: 'dashboard' }               
+  { path: 'chiller', loadComponent: () => import('./chiller-control/chiller-control.component').then(m => m.ChillerControlComponent) },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
 ];
 
 export const appRoutingProviders = [provideRouter(routes)];
