@@ -8,13 +8,11 @@ export class AuthService {
   isLoggedIn$ = this.loggedIn.asObservable();
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    // 只有在瀏覽器環境才讀取 token
-    if (isPlatformBrowser(this.platformId)) {
-      const hasToken = !!localStorage.getItem('jwt_token');
-      this.loggedIn.next(hasToken);
-    }
+  if (isPlatformBrowser(this.platformId)) {
+    const token = localStorage.getItem('jwt_token');
+    this.loggedIn.next(!!token);
   }
-
+}
   setLoginStatus(status: boolean, token?: string) {
     if (isPlatformBrowser(this.platformId)) {
       if (status && token) {

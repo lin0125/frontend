@@ -8,10 +8,14 @@ import { LoginComponent } from './login.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
+  // 確保這裡與 server 路由對應
+  { path: 'history/:dataset', component: HistoryComponent },
   { path: 'history', component: HistoryComponent },
-  { path: 'chiller', loadComponent: () => import('./chiller-control/chiller-control.component').then(m => m.ChillerControlComponent) },
+  {
+    path: 'chiller',
+    loadComponent: () => import('./chiller-control/chiller-control.component').then(m => m.ChillerControlComponent)
+  },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];
-
 export const appRoutingProviders = [provideRouter(routes)];
