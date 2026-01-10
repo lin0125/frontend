@@ -37,6 +37,27 @@
         <img src="assets/logo_no_bg.png" alt="Logo">
       </div>
     </nav>
+
+    <div class="main-layout">
+    <nav class="side-nav" [class.closed]="isNavClosed">
+      <ul>
+        <ng-container *ngIf="isLoggedIn">
+          <li [routerLink]="'/dashboard'" routerLinkActive="active">
+            <span class="text">主頁</span>
+          </li>
+          <li [routerLink]="'/history'" routerLinkActive="active">
+            <span class="text">歷史記錄</span>
+          </li>
+          <li [routerLink]="'/chiller'" routerLinkActive="active">
+            <span class="text">智慧控制頁面</span>
+          </li>
+        </ng-container>
+
+        <li *ngIf="!isLoggedIn" [routerLink]="'/login'" routerLinkActive="active">
+          <span class="text">LogIn</span>
+        </li>
+      </ul>
+    </nav>
     
 
     <!-- Main Content -->

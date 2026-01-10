@@ -32,6 +32,11 @@ export class ApiService {
     });
   }
 
+  googleLogin(googleToken: string): Observable<any> {
+  // 對應 Swagger 中的 /api/v1/auth/google
+  return this.http.post(`${this.BASE_URL}/api/v1/auth/google`, { googleToken });
+  }
+
   getDashboardData(): Observable<any> {
     this.counter+= 1;
 

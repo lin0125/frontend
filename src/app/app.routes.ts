@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HistoryComponent } from './history/history.component';
 
 export const routes: Routes = [
+  { path: 'login', component: LoginComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'history/:dataset', component: HistoryComponent, 

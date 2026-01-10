@@ -9,12 +9,19 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(),
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
-
-    // ✅ 重點：使用 Hash 模式以支援 file:// 協議
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider('你的GOOGLE_CLIENT_ID.apps.googleusercontent.com')
+          }
+        ],
+        onError: (err) => console.error(err)
+      } as SocialAuthServiceConfig,
+    }
   ]
 };
