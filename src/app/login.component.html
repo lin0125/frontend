@@ -1,11 +1,14 @@
-<div class="login-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
-  <div *ngIf="showButton" class="login-box">
-    <h2>AI-COS 系統登入</h2>
-    <p>請使用 Google 帳號進行身分驗證</p>
-    <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+<div class="login-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8f9fa;">
+  <div *ngIf="isBrowser" style="padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center;">
+    <h2 style="margin-bottom: 20px; color: #333;">AI-COS 系統登入</h2>
+    <p style="margin-bottom: 30px; color: #666;">請使用公司 Google 帳號進行驗證</p>
+    
+    <div style="display: flex; justify-content: center;">
+      <asl-google-signin-button type="standard" size="large" shape="pill"></asl-google-signin-button>
+    </div>
   </div>
-  
-  <div *ngIf="!showButton">
-    <p>Loading Login Interface...</p>
+
+  <div *ngIf="!isBrowser">
+    <p>正在載入登入介面...</p>
   </div>
 </div>

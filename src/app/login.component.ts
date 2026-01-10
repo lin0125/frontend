@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { ApiService } from './service/api.service';
 import { AuthService } from './service/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,23 +12,23 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
-  // 加入一個旗標來控制按鈕顯示
-  showButton = false;
+  isBrowser: boolean;
 
   constructor(
-    private socialAuthService: SocialAuthService,
     private apiService: ApiService,
     private authService: AuthService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    // 使用 Optional 裝飾器防止在 Server 端因為找不到 Provider 而崩潰
+    @Inject(SocialAuthService) private socialAuthService: any 
   ) {
-    // 只有在瀏覽器環境才允許顯示按鈕
-    this.showButton = isPlatformBrowser(this.platformId);
+    this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.socialAuthService.authState.subscribe((user) => {
+    // 只有在瀏覽器才執行訂閱
+    if (this.isBrowser && this.socialAuthService) {
+      this.socialAuthService.authState.subscribe((user: any) => {
         if (user && user.idToken) {
           this.apiService.googleLogin(user.idToken).subscribe({
             next: (res: any) => {
