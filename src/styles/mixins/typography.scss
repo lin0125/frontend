@@ -1,0 +1,31 @@
+@use 'variables/text-styles' as *;
+@use 'variables/colors' as *;
+
+@mixin heading-xxl {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+@mixin heading-xl {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+@mixin heading-lg {
+  font-size: $font-size-lg;
+  font-weight: bold;
+}
+
+@mixin label {
+  font-size: $font-size-lg;
+  font-weight: 500;
+  color: $text-color;
+}
+
+@mixin value {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  color: $highlight-color;
+}

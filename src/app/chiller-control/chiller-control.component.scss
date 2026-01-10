@@ -1,0 +1,402 @@
+@use 'main' as *;
+
+.chiller-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  font-size: $font-size-lg;
+
+  h2 {
+    text-align: center;
+    margin-bottom: $spacing-lg;
+    font-size: $font-size-xxl;
+  }
+
+  .layout {
+    display: flex;
+    gap: $spacing-xl;
+
+    .control-form {
+      flex: 1 1 40%;
+      background-color: $card-background;
+      padding: $spacing-lg;
+      border-radius: 16px;
+      box-shadow: $card-shadow;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+
+      label {
+        font-weight: bold;
+      }
+
+      input, select {
+        padding: 10px 14px;
+        font-size: $font-size-lg;
+        border: 1px solid $border-color;
+        border-radius: 6px;
+      }
+      .select-wrap {
+        position: relative;
+        display: block;
+        min-width: 100%;
+
+        select {
+          width: 100%;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background: transparent;
+          padding-right: 42px; // 預留箭頭空間
+          cursor: pointer;
+
+          // 隱藏舊版 Edge/IE 的內建箭頭
+          &::-ms-expand { display: none; }
+        }
+
+        // 用邊框畫一個小「V」箭頭（純 CSS）
+        &::after {
+          content: "";
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          width: 8px;
+          height: 8px;
+          border-right: 2px solid $highlight-color;
+          border-bottom: 2px solid $highlight-color;
+          transform: translateY(-60%) rotate(45deg);
+          pointer-events: none; // 不要擋到點擊
+        }
+      }
+
+      button {
+        margin-top: $spacing-md;
+        background-color: $highlight-color;
+        color: rgb(255, 255, 255);
+        font-weight: bold;
+        padding: 12px 16px;
+        font-size: $font-size-lg;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: darken($highlight-color, 5%);
+        }
+      }
+    }
+
+    .right-panel {
+      flex: 1 1 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .info-block {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+        background-color: $card-background;
+        padding: $spacing-md;
+        border-radius: 12px;
+        box-shadow: $card-shadow;
+
+        .info-line {
+          display: flex;
+          align-items: center;
+          font-size: $font-size-xl;
+          padding: $spacing-sm $spacing-md;
+          border: 2px solid $border-color;
+          border-radius: 12px;
+          background-color: lighten($card-background, 2%);
+          gap: $spacing-sm;
+
+          .emoji {
+            font-size: 28px;
+          }
+
+          .label {
+            font-weight: bold;
+            flex: 1;
+          }
+
+          .value {
+            font-weight: bold;
+            color: $highlight-color;
+          }
+
+          &.highlight {
+            border-color: $highlight-color;
+            background-color: lighten($highlight-color, 45%);
+          }
+        }
+
+        .info-row-horizontal {
+          display: flex;
+          gap: $spacing-md;
+
+          .info-line {
+            flex: 1;
+          }
+        }
+      }
+
+      .model-section {
+        background-color: $card-background;
+        padding: $spacing-md;
+        border-radius: 12px;
+        box-shadow: $card-shadow;
+        font-size: $font-size-lg;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-lg;
+
+        .model-version {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          border-left: 6px solid $highlight-color;
+          background-color: lighten($card-background, 2%);
+          padding: $spacing-md;
+          border-radius: 8px;
+
+          .emoji {
+            font-size: 28px;
+          }
+
+          .label {
+            font-weight: bold;
+          }
+
+          .value {
+            font-weight: bold;
+            color: $highlight-color;
+            margin-left: auto;
+          }
+        }
+
+        .model-actions-row {
+          display: flex;
+          gap: $spacing-lg;
+          flex-wrap: wrap;
+
+          .upload-group,
+          .update-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+
+            label {
+              font-weight: bold;
+            }
+
+            .custom-file-btn {
+              background-color: $highlight-color;
+              color: white;
+              padding: 12px 16px;
+              border-radius: 6px;
+              cursor: pointer;
+              text-align: center;
+              font-weight: bold;
+              display: inline-block;
+
+              input[type='file'] {
+                display: none;
+              }
+
+              &:hover {
+                background-color: darken($highlight-color, 5%);
+              }
+            }
+
+            button {
+              padding: 12px 16px;
+              font-size: $font-size-lg;
+              font-weight: bold;
+              border: none;
+              border-radius: 6px;
+              background-color: $highlight-color;
+              color: white;
+              cursor: pointer;
+
+              &:hover {
+                background-color: darken($highlight-color, 5%);
+              }
+            }
+          }
+        }
+      }
+      .select-control {
+        height: 40px;
+        padding: 0 $spacing-sm;
+        border: 1px solid lighten($highlight-color, 28%);
+        border-radius: 6px;
+        background-color: lighten($card-background, 2%);
+        font-size: $font-size-lg;
+        &:focus { outline: none; border-color: $highlight-color; }
+      }
+
+      .file-name {
+        font-size: $font-size-lg;
+        color: #444;
+        margin-left: $spacing-sm;
+        max-width: 360px;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.placeholder { color: #999; }
+      }
+
+      /* 讓 .custom-file-btn 在 disabled 狀態也有視覺提示（沿用你的配色） */
+      .custom-file-btn.disabled {
+        opacity: .6;
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+
+/* ===========================
+   模型管理（mm- 命名空間）
+   =========================== */
+.mm-manager {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+
+  &__title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+
+  &__label {
+    min-width: 88px;
+    color: #555;
+  }
+
+  &__select, &__input {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: border-color .15s ease;
+    &:focus {
+      outline: none;
+      border-color: #8bb5ff;
+      background: #fff;
+    }
+  }
+
+  &__select--models { min-width: 280px; }
+  &__select { min-width: 180px; }
+
+  /* 沿用你的 .file-upload 外觀，這裡只是對齊高度 */
+  .file-upload input[type="file"] {
+    height: 36px;
+    display: inline-block;
+  }
+
+  &__btn {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform .02s ease, opacity .15s ease;
+
+    &--apply {
+      background: #2563eb;  /* 適中藍 */
+      color: #fff;
+    }
+    &:active { transform: translateY(1px); }
+    &:disabled { opacity: .6; cursor: not-allowed; }
+  }
+
+  &__hint {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #666;
+    strong { color: #222; }
+  }
+
+  &__loading {
+    font-size: 13px;
+    color: #666;
+  }
+
+  &__error {
+    margin-top: 6px;
+    color: #b00020;
+    font-size: 13px;
+  }
+}
+.mm-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  /* 隱藏原生 input，但保留可及性 */
+  .mm-file-input {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* 檔名顯示 */
+  .mm-file-name {
+    max-width: 360px;
+    display: inline-block;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.placeholder { color: #888; }
+  }
+
+  /* 如果你有 .btn/.btn-primary，會優先吃你現有樣式；下面是 fallback */
+  .mm-file-btn,
+  .mm-file-upload-btn {
+    /* fallback：若你的專案沒有 .btn 樣式才會看到 */
+    &:not(.btn) {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid #d8d8d8;
+      background: #fafafa;
+      cursor: pointer;
+    }
+  }
+  .mm-file-btn:not(.btn) {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+  }
+  .mm-file-upload-btn:not(.btn) {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #fff;
+  }
+}

@@ -1,0 +1,43 @@
+<div class="dashboard-container">
+  <div class="dashboard-main">
+    <!-- 🔝 圖表區塊：Grafana iframe 嵌入 -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h1>{{ chartTitle }}</h1>
+        <select [(ngModel)]="selectedChart" (change)="updateChart()">
+          <option value="KW">KW</option>
+          <option value="RT">RT</option>
+        </select>
+      </div>
+      <div style="max-height:90%">
+        <iframe
+          *ngIf="grafanaChartUrl"
+          [src]="grafanaChartUrl"
+          width="100%"
+          height="400"
+          frameborder="0"
+          style="border: none;">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- 🧊 溫度 & ⚡ 用電資訊：假資料顯示 -->
+    <div class="info-row">
+      <div class="temp-horizontal-box">
+        <div class="temp-block current">
+          <div class="label">前次控制溫度</div>
+          <div class="value">{{ currentTemperature }} °C</div>
+        </div>
+        <div class="temp-block suggested">
+          <div class="label">當前控制溫度</div>
+          <div class="value">{{ suggestedTemperature }}</div>
+        </div>
+      </div>
+
+      <div class="kwh-card">
+        <div class="label">今日累計省電百分比</div>
+        <div class="value">{{ currentKWh }} %</div>
+      </div>
+    </div>
+  </div>
+</div>

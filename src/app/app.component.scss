@@ -1,0 +1,163 @@
+@use 'main' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $background-color;
+  font-family: 'Noto Sans TC', sans-serif;
+  color: $text-color;
+  font-size: $base-font-size;
+}
+
+/* 🔷 標題列 */
+.title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $primary-color;
+  color: $title-txt-color;
+  padding: $spacing-sm $spacing-lg;
+  height: 56px;
+  font-size: $font-size-lg;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 🔳 漢堡選單按鈕 */
+.menu-button {
+  background: none;
+  border: none;
+  color: $title-txt-color;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform $transition-speed;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* 📊 主體區域 */
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 🧭 側邊欄 */
+.side-nav {
+  position: relative;
+  height: 95vh;
+  width: 220px;
+  background-color: $secondary-color;
+  padding-top: $spacing-sm;
+  transition: width $transition-speed;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+
+    li {
+      padding: $spacing-sm $spacing-lg;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      color: $text-color;
+      cursor: pointer;
+      transition: background-color $transition-speed;
+      border-left: 4px solid transparent;
+
+      &:hover {
+        background-color: lighten($highlight-color, 42%);
+      }
+
+      &.active {
+        background-color: $highlight-color;
+        color: white;
+        font-weight: bold;
+        border-left: 4px solid white;
+      }
+    }
+  }
+
+  .barIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+  }
+
+  /* 📌 左下角圖片區 */
+  .side-nav-footer {
+    position: absolute;
+    bottom: 80px; // ✅ 往上再提一點（原本是 40px）
+    left: 0;
+    width: 100%;
+    text-align: center;
+  
+    img {
+      width: 100%; // ✅ 滿版寬度
+      height: 219px; // ✅ 再提高一點（你可調整為 120px 看效果）
+      object-fit: contain; // 保持比例，不會變形
+      opacity: 0.85;
+      transition: all $transition-speed;
+  
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* 🔒 收合狀態 */
+  &.closed {
+    width: 60px;
+
+    ul {
+      li {
+        justify-content: center;
+        padding: $spacing-sm 0;
+
+        .icon {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .text {
+        display: none;
+      }
+    }
+
+
+    .side-nav-footer {
+      bottom: 40px; // 收合時位置也微調一點
+
+      img {
+        width: 100%;
+        height: 60px;       // ✅ 縮小版高度
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+/* 📃 主內容區 */
+.content {
+  flex: 1;
+  padding: $spacing-lg;
+  background-color: $background-color;
+  overflow-y: auto;
+}

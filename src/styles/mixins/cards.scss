@@ -1,0 +1,9 @@
+@use 'variables/colors' as *;
+@use 'variables/shadows' as *;
+
+@mixin card {
+  background-color: $card-background;
+  border-radius: 16px;
+  box-shadow: $card-shadow;
+  padding: 24px;
+}

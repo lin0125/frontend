@@ -1,0 +1,111 @@
+@use 'main' as *;
+
+.dashboard-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.chart-card {
+  background-color: $card-background;
+  border-radius: 16px;
+  padding: $spacing-md;
+  box-shadow: $card-shadow;
+  height: auto;
+
+  .chart-header {
+    @include flex-between;
+    margin-bottom: $spacing-md;
+
+    h1 {
+      @include heading-xl;
+      margin: 0;
+    }
+
+    select {
+      padding: 8px 14px;
+      font-size: $font-size-md;
+      border-radius: 8px;
+      border: 1px solid $border-color;
+      background-color: $secondary-color;
+    }
+  }
+
+  iframe {
+    border-radius: 12px;
+    box-shadow: $card-shadow;
+  }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: $spacing-xl;
+  padding: $spacing-sm;
+
+  .temp-horizontal-box {
+    flex: 2;
+    display: flex;
+    justify-content: space-between;
+    background-color: $card-background;
+    border-radius: 16px;
+    box-shadow: $card-shadow;
+    overflow: hidden;
+
+    .temp-block {
+      flex: 1;
+      padding: $spacing-lg;
+      text-align: center;
+
+      .label {
+        font-size: $font-size-lg;
+        color: #666;
+        margin-bottom: $spacing-sm;
+      }
+
+      .value {
+        @include value;
+      }
+
+      &.current {
+        background-color: #e3f2fd;
+
+        .value {
+          color: #1976d2;
+        }
+      }
+
+      &.suggested {
+        background-color: #fff3e0;
+
+        .value {
+          color: #ff9800;
+        }
+      }
+    }
+  }
+
+  .kwh-card {
+    flex: 1;
+    background-color: $card-background;
+    border-radius: 16px;
+    box-shadow: $card-shadow;
+    padding: $spacing-lg;
+    text-align: center;
+
+    .label {
+      font-size: $font-size-lg;
+      color: #666;
+      margin-bottom: $spacing-sm;
+    }
+
+    .value {
+      @include value;
+      color: $highlight-color;
+    }
+  }
+}

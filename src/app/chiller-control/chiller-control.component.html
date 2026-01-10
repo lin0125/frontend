@@ -1,0 +1,142 @@
+<div class="chiller-container">
+  <h2></h2>
+
+  <div class="layout">
+    <!-- 🔧 左側參數輸入 -->
+    <div class="control-form">
+      <label>控制上限溫度：</label>
+      <input type="number" [(ngModel)]="upperLimit" (ngModelChange)="onParamChange()" />
+
+      <label>控制下限溫度：</label>
+      <input type="number" [(ngModel)]="lowerLimit" (ngModelChange)="onParamChange()"/>
+
+      <label>每日初始溫度：</label>
+      <input type="number" [(ngModel)]="baseTemp" (ngModelChange)="onParamChange()"/>
+
+      <label>溫度調整最大調整量：</label>
+      <input type="number" [(ngModel)]="maxStep" (ngModelChange)="onParamChange()"/>
+
+      <label>溫度調整時間點（小時）：</label>
+      <div class="select-wrap">
+        <select [(ngModel)]="controlStartTime" (ngModelChange)="onParamChange()">
+          <option *ngFor="let h of hours" [value]="h">
+            {{ h | number:'2.0' }}:00
+          </option>
+        </select>
+      </div>
+
+      <button (click)="updateParams()">更新參數</button>
+    </div>
+
+    <!-- 右側狀態 + 模型 -->
+    <div class="right-panel">
+      <!-- 狀態資訊 -->
+      <div class="info-block">
+        <div class="info-line">
+          <i class="fas fa-thermometer-half icon"></i>
+          <span class="label">控制溫度：</span>
+          <span class="value">{{ currentControlTemp }} °C</span>
+        </div>
+
+      <div class="info-row-horizontal" *ngIf="!useBlockLayout()">
+        <div class="info-line" *ngFor="let chiller of getChillers()">
+          <i class="fas fa-snowflake icon"></i>
+          <span class="label">{{ chiller.label }}：</span>
+          <span class="value">{{ chiller.temp }} ℃</span>
+        </div>
+      </div>
+
+      <div class="info-block" *ngIf="useBlockLayout()">
+        <div class="info-line" *ngFor="let chiller of getChillers()">
+          <i class="fas fa-snowflake icon"></i>
+          <span class="label">{{ chiller.label }}：</span>
+          <span class="value">{{ chiller.temp }} ℃</span>
+        </div>
+      </div>
+
+        <div class="info-line highlight">
+          <i class="fas fa-cogs icon"></i>
+          <span class="label">啟動冰機：</span>
+          <span class="value">{{ activeChiller }}</span>
+        </div>
+      </div>
+
+      <br>
+      <!-- 模型操作區 -->
+       <section class="model-section">
+  <!-- 目前啟用版本（沿用你的樣式） -->
+  <div class="model-version">
+    <i class="fas fa-brain icon"></i>
+    <div class="label">目前啟用模型</div>
+    <div class="value">{{ mmActiveModel || '尚未指定（預設最新）' }}</div>
+  </div>
+
+  <!-- 兩欄操作區：上傳 / 切換 -->
+  <div class="model-actions-row">
+    <!-- 上傳區 -->
+    <div class="upload-group">
+      <label>上傳新模型</label>
+
+      <!-- 類型選擇 -->
+      <select
+        class="select-control"
+        [(ngModel)]="mmModelType"
+        (change)="mmOnTypeChange()"
+        [disabled]="mmUploading || mmApplying || mmLoadingList">
+        <option value="RT">RT</option>
+        <option value="PW">PW</option>
+      </select>
+
+      <!-- 自訂檔案按鈕（沿用 .custom-file-btn） -->
+      <div>
+        <span class="custom-file-btn" (click)="mmFileInput.click()" [class.disabled]="mmUploading || mmApplying || mmLoadingList">
+          選擇模型檔（.pickle / .pkl）
+          <input
+            #mmFileInput
+            type="file"
+            accept=".pickle,.pkl"
+            (change)="mmOnFilePicked($event)"
+            [disabled]="mmUploading || mmApplying || mmLoadingList"/>
+        </span>
+        <span class="file-name" [class.placeholder]="!mmPickedName">
+          {{ mmPickedName || '未選擇檔案' }}
+        </span>
+      </div>
+
+      <!-- 上傳按鈕（用你 group 內的 button 樣式） -->
+      <button
+        (click)="mmDoUpload()"
+        [disabled]="!mmPendingFile || mmUploading || mmApplying || mmLoadingList">
+        {{ mmUploading ? '上傳中…' : '上傳' }}
+      </button>
+    </div>
+
+    <!-- 切換區 -->
+    <div class="update-group">
+      <label>切換已上傳模型</label>
+
+      <select
+        class="select-control"
+        [(ngModel)]="mmSelectedModel"
+        [disabled]="(mmModels?.length || 0) === 0 || mmApplying || mmUploading || mmLoadingList">
+        <option *ngFor="let m of mmModels" [value]="m">
+          {{ m }} {{ m === mmActiveModel ? '（啟用中）' : '' }}
+        </option>
+      </select>
+
+      <button
+        (click)="mmApplyModel()"
+        [disabled]="!mmSelectedModel || mmApplying || mmUploading || mmLoadingList">
+        {{ mmApplying ? '套用中…' : '套用' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- 狀態訊息 -->
+  <div *ngIf="mmLoadingList">清單載入中…</div>
+  <div class="error" *ngIf="mmModelError">{{ mmModelError }}</div>
+</section>
+
+    </div>
+  </div>
+</div>

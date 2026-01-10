@@ -1,0 +1,36 @@
+@use 'variables/colors' as *;
+@use 'variables/spacing' as *;
+@use 'variables/text-styles' as *;
+@use 'variables/shadows' as *;
+@use 'mixins/cards' as *;
+@use 'mixins/layout' as *;
+@use 'mixins/typography' as *;
+
+@forward 'variables/colors';
+@forward 'variables/spacing';
+@forward 'variables/text-styles';
+@forward 'variables/shadows';
+@forward 'mixins/cards';
+@forward 'mixins/layout';
+@forward 'mixins/typography';
+
+// Reset
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.icon {
+  margin-right: 6px;
+  font-size: 16px;
+  color: #1976d2;
+  vertical-align: middle;
+}
+
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  font-size: $base-font-size; // 預設 16px，可調成 18px
+}
