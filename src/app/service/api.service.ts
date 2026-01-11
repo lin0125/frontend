@@ -6,11 +6,11 @@ import { getAppConfig } from '../global';
 import { get } from 'http';
 
 
-
+// http://10.25.1.191:4243'
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private BASE_URL = getAppConfig().apiBaseUrl || 'http://10.25.1.191:4243';
+  private BASE_URL = getAppConfig()?.apiBaseUrl || 'http://localhost:8000';
   private counter = 0;
 
   constructor(private http: HttpClient) {}
