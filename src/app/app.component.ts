@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet, Router } from '@angular/router'; // 注入 Router
 import { AuthService } from './service/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,12 @@ import { AuthService } from './service/auth.service';
 export class AppComponent implements OnInit {
   isNavClosed = false;
   isLoggedIn = false;
+  isLoggedIn$: Observable<boolean>; // 定義一個 Observable
 
-  constructor(
-    private authService: AuthService,
-    private router: Router // 注入 Router 以便登出後跳轉
-  ) {}
+  constructor(private authService: AuthService) {
+    // 綁定 AuthService 的狀態
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
+  }
 
   ngOnInit() {
     // 訂閱登入狀態
@@ -32,7 +34,6 @@ export class AppComponent implements OnInit {
 
   // 修正點：新增 logout 方法
   logout() {
-    this.authService.logout(); // 清除 Token 並更新狀態
-    this.router.navigate(['/login']); // 跳轉回登入頁面
+    this.authService.logout();
   }
 }

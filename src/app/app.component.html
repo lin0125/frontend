@@ -2,28 +2,41 @@
   <header class="title-bar">
     <button class="menu-button" (click)="toggleNav()">☰</button>
     <h1>AI-COS</h1>
-    <button *ngIf="isLoggedIn" (click)="logout()" class="logout-btn">登出</button>
+    
+    <button *ngIf="isLoggedIn$ | async" (click)="logout()" class="logout-btn">
+      登出
+    </button>
   </header>
 
   <div class="main-layout">
     <nav class="side-nav" [class.closed]="isNavClosed">
-      <ul>
-        <ng-container *ngIf="isLoggedIn">
+      
+      <ul *ngIf="{ value: isLoggedIn$ | async } as loginState">
+        
+        <ng-container *ngIf="loginState.value">
           <li [routerLink]="'/dashboard'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">主頁</span>
+            <span class="text" *ngIf="!isNavClosed">主頁 (Dashboard)</span>
           </li>
+          
           <li [routerLink]="'/history'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">歷史記錄</span>
+            <span class="text" *ngIf="!isNavClosed">歷史記錄 (History)</span>
           </li>
-          <li [routerLink]="'/chiller'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">智慧控制頁面</span>
+          
+          <li [routerLink]="'/chiller-control'" routerLinkActive="active">
+            <span class="text" *ngIf="!isNavClosed">智慧控制 (Control)</span>
+          </li>
+
+          <li (click)="logout()" style="cursor: pointer;" class="logout-item">
+            <span class="text" *ngIf="!isNavClosed">登出 (Logout)</span>
           </li>
         </ng-container>
 
-        <li *ngIf="!isLoggedIn" [routerLink]="'/login'" routerLinkActive="active">
+        <li *ngIf="!loginState.value" [routerLink]="'/login'" routerLinkActive="active">
           <span class="text" *ngIf="!isNavClosed">LogIn</span>
         </li>
+
       </ul>
+
       <div class="side-nav-footer">
         <img src="assets/logo_no_bg.png" alt="Logo">
       </div>

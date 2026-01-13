@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { SocialAuthService, GoogleSigninButtonModule, SocialUser } from '@abacritt/angularx-social-login';
 import { ApiService } from './service/api.service';
 import { AuthService } from './service/auth.service';
+import { Component } from '@angular/core';
+import { AuthService } from './service/auth.service'; // 引入 AuthService
 
 @Component({
   selector: 'app-login',
@@ -62,5 +64,15 @@ export class LoginComponent implements OnInit {
         alert('登入失敗: ' + (err.error?.message || '請檢查後端連線'));
       }
     });
+  }
+  handleLoginResponse(response: any) {
+    console.log('Backend response:', response);
+
+    if (response.success) { // 根據您的後端回應結構判斷
+      // 這裡呼叫 AuthService 更新狀態
+      // 如果後端有回傳 JWT token，記得傳進去
+      const token = response.token || 'dummy-token'; 
+      this.authService.loginSuccess(token);
+    }
   }
 }
