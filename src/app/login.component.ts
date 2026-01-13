@@ -4,9 +4,7 @@ import { Router } from '@angular/router';
 // 引入 Google 登入相關模組
 import { SocialAuthService, GoogleSigninButtonModule, SocialUser } from '@abacritt/angularx-social-login';
 import { ApiService } from './service/api.service';
-import { AuthService } from './service/auth.service';
-import { Component } from '@angular/core';
-import { AuthService } from './service/auth.service'; // 引入 AuthService
+import { AuthService } from './service/auth.service'; 
 
 @Component({
   selector: 'app-login',
@@ -46,33 +44,28 @@ export class LoginComponent implements OnInit {
   }
 
   loginToBackend(token: string) {
-    this.apiService.googleLogin(token).subscribe({
-      next: (res: any) => {
-        console.log('✅ 後端回應:', res);
-        // 嘗試取得 token (相容 res.data.token 或 res.token)
-        const jwt = res.data?.token || res.token || (res.data && typeof res.data === 'string' ? res.data : null);
-        
-        if (jwt) {
-          this.authService.setLoginStatus(true, jwt);
-          this.router.navigate(['/dashboard']);
-        } else {
-          console.error('後端回應成功但沒有 Token');
-        }
-      },
-      error: (err: any) => {
-        console.error('❌ 後端驗證失敗:', err);
-        alert('登入失敗: ' + (err.error?.message || '請檢查後端連線'));
-      }
-    });
-  }
-  handleLoginResponse(response: any) {
-    console.log('Backend response:', response);
+  this.apiService.googleLogin(token).subscribe({
+    next: (res: any) => {
+      console.log('✅ 後端回應:', res);
+      const jwt = res.data?.token || res.token || (res.data && typeof res.data === 'string' ? res.data : null);
+      
+      if (jwt) {
+        // 🔴 錯誤寫法 (請刪除或是修改這行)
+        // this.authService.setLoginStatus(true, jwt); 
 
-    if (response.success) { // 根據您的後端回應結構判斷
-      // 這裡呼叫 AuthService 更新狀態
-      // 如果後端有回傳 JWT token，記得傳進去
-      const token = response.token || 'dummy-token'; 
-      this.authService.loginSuccess(token);
+        // 🟢 正確寫法 (請改成這樣)
+        this.authService.loginSuccess(jwt); 
+        
+        // 注意：loginSuccess 裡面已經有寫 router.navigate(['/dashboard']) 了
+        // 所以這裡不用再寫一次 navigate
+      } else {
+        console.error('後端回應成功但沒有 Token');
+      }
+    },
+    error: (err: any) => {
+      console.error('❌ 後端驗證失敗:', err);
+      alert('登入失敗: ' + (err.error?.message || '請檢查後端連線'));
     }
-  }
+  });
+}
 }

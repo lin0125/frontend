@@ -1,51 +1,66 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, Optional } from '@angular/core'; // 1. 加入 Optional
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { SocialAuthService } from '@abacritt/angularx-social-login'; // 2. 引入 SocialAuthService
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // 1. 使用 BehaviorSubject 保存狀態，預設為 false
   private loggedIn = new BehaviorSubject<boolean>(false);
-  
-  // 2. 公開的 Observable 供外部訂閱
   public isLoggedIn$ = this.loggedIn.asObservable();
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object, // 保留 SSR 檢查機制
-    private router: Router                           // 加入 Router 用於跳轉
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router,
+    // 3. 注入 SocialAuthService (加 @Optional 以防測試環境沒有)
+    @Optional() private socialAuthService: SocialAuthService 
   ) {
-    // 3. 建構子初始化：只在瀏覽器環境下檢查 localStorage
-    // 這樣可以避免 SSR (Server Side Rendering) 時報錯
+    // if (isPlatformBrowser(this.platformId)) {
+    //   const token = localStorage.getItem('jwt_token');
+    //   // ✅ 修改後：如果有 Token，不只更新狀態，還直接跳轉去 Dashboard
+    //   if (token) {
+    //     this.loggedIn.next(true);
+    //     this.router.navigate(['/dashboard']);
+    //     }
+    // }
+    // ✅ 或是強制清除 Token
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('jwt_token');
-      this.loggedIn.next(!!token); // 如果有 token 就設為 true
+        localStorage.removeItem('jwt_token');
+        this.loggedIn.next(false);
     }
   }
 
-  // 4. 登入成功處理
   loginSuccess(token?: string) {
     if (isPlatformBrowser(this.platformId)) {
       if (token) {
-        localStorage.setItem('jwt_token', token); // 統一使用 'jwt_token'
+        localStorage.setItem('jwt_token', token);
       }
     }
-    this.loggedIn.next(true); // 更新狀態
-    this.router.navigate(['/dashboard']); // 導向主頁
+    this.loggedIn.next(true);
+    this.router.navigate(['/dashboard']);
   }
 
-  // 5. 登出處理
+  // 4. 修改 logout 方法
   logout() {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('jwt_token');
+      
+      // 這裡呼叫 Google 登出
+      // 檢查 socialAuthService 是否存在 (避免 SSR 報錯)
+      if (this.socialAuthService) {
+        this.socialAuthService.signOut().catch(err => {
+            // 即使 Google 登出失敗 (例如使用者本來就沒登入 Google)，我們也要繼續執行本地登出
+            console.log('Google signOut completed or failed (ignoring):', err);
+        });
+      }
     }
-    this.loggedIn.next(false); // 更新狀態
-    this.router.navigate(['/login']); // 導向登入頁
+    
+    this.loggedIn.next(false);
+    this.router.navigate(['/login']);
   }
 
-  // (選用) 獲取當前 Token 的方法，方便 Interceptor 使用
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('jwt_token');

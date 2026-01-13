@@ -15,15 +15,15 @@
         
         <ng-container *ngIf="loginState.value">
           <li [routerLink]="'/dashboard'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">主頁 (Dashboard)</span>
+            <span class="text" *ngIf="!isNavClosed">主頁 </span>
           </li>
           
           <li [routerLink]="'/history'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">歷史記錄 (History)</span>
+            <span class="text" *ngIf="!isNavClosed">歷史記錄 </span>
           </li>
           
           <li [routerLink]="'/chiller-control'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">智慧控制 (Control)</span>
+            <span class="text" *ngIf="!isNavClosed">智慧控制 </span>
           </li>
 
           <li (click)="logout()" style="cursor: pointer;" class="logout-item">
