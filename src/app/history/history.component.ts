@@ -66,9 +66,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
     this.api.getGrafanaEmbedUrl(panelId, from, to).subscribe({
       next: (res) => {
+        console.log(res);
+        console.log(res.url);
         this.grafanaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.url);
       },
-      error: () => {
+      error: (e) => {
+        console.log(e);
         console.warn('⚠️ 無法取得圖表連結');
       }
     });

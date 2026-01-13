@@ -1,17 +1,26 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+// 🔴 修改這裡：加入 withInterceptors
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http'; 
 import { provideClientHydration } from '@angular/platform-browser';
 import { SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+// 記得引入您剛建立的 interceptor
+import { authInterceptor } from './interceptor/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withFetch()),
+    
+    // 修改這裡：註冊 interceptor
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor]) 
+    ),
+    
     {
-      provide: 'SocialAuthServiceConfig', // 必須是這個精確的字串
+      provide: 'SocialAuthServiceConfig',
       useValue: {
         autoLogin: false,
         providers: [

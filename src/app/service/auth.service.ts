@@ -14,21 +14,21 @@ export class AuthService {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
-    // 3. 注入 SocialAuthService (加 @Optional 以防測試環境沒有)
     @Optional() private socialAuthService: SocialAuthService 
   ) {
-    // if (isPlatformBrowser(this.platformId)) {
-    //   const token = localStorage.getItem('jwt_token');
-    //   // ✅ 修改後：如果有 Token，不只更新狀態，還直接跳轉去 Dashboard
-    //   if (token) {
-    //     this.loggedIn.next(true);
-    //     this.router.navigate(['/dashboard']);
-    //     }
-    // }
-    // ✅ 或是強制清除 Token
+    // === 方法二修正版：每次刷新都強制視為【未登入】並踢回首頁 ===
     if (isPlatformBrowser(this.platformId)) {
-        localStorage.removeItem('jwt_token');
-        this.loggedIn.next(false);
+      // 1. 清除 Token
+      localStorage.removeItem('jwt_token');
+      
+      // 2. 更新狀態為 False
+      this.loggedIn.next(false);
+
+      // 3. 【關鍵修正】強制跳轉回登入頁
+      // 使用 setTimeout 確保 Angular 初始化完成後才執行跳轉
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 0);
     }
   }
 
