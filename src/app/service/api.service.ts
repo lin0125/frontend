@@ -16,10 +16,15 @@ export class ApiService {
     return this.http.post(`${this.BASE_URL}/api/v1/auth/google`, { googleToken });
   }
 
-  getGrafanaEmbedUrl(panelId: number, from: number, to: number, theme: 'light' | 'dark' = 'light'): Observable<{ url: string }> {
-    // 務必確認這裡有加上 /api，對應後端的 @RequestMapping("/api")
+  getGrafanaEmbedUrl(uid: string, panelId: number, from: number, to: number, theme: 'light' | 'dark' = 'light'): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`${this.BASE_URL}/api/grafana-embed`, {
-      params: { panelId: panelId.toString(), from: from.toString(), to: to.toString(), theme }
+      params: { 
+        dashboardUid: uid,  // 將 UID 傳給後端
+        panelId: panelId.toString(), 
+        from: from.toString(), 
+        to: to.toString(), 
+        theme 
+      }
     });
   }
 

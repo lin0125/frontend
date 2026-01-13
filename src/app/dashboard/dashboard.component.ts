@@ -19,6 +19,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   dashboardData = { Ntemp: 0, Ptemp: 0, kwh: 0, count: 0 };
 
+  // [修改 1] 定義主畫面的 Dashboard UID
+  private readonly DASHBOARD_UID = 'a84a4847-074d-44c1-a443-30f57410b129'; 
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -29,19 +31,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      // ✅ 分開圖表與資料刷新
       this.refresher.startInterval('dashboard-data', () => this.loadDashboardData(), 4000);
-      //this.refresher.startInterval('dashboard-chart', () => this.updateChart(), 60000);
     }
 
-    // 初始載入
     this.loadDashboardData();
     this.updateChart();
   }
 
   ngOnDestroy(): void {
-    //this.refresher.stop('dashboard-data');
-    //this.refresher.stop('dashboard-chart');
+    // Cleanup if needed
   }
 
   loadDashboardData(): void {
@@ -58,30 +56,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   updateChart(): void {
-    /*
-    const start = new Date("2025-05-16T00:00:00");
-    const end = new Date("2025-05-17T00:00:00");
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+
+    // const fromUtc = new Date(today).getTime();
+    // const to = new Date(today);
+    // to.setDate(today.getDate() + 1);
+    // const toUtc = new Date(to).getTime();
+
+    const start = new Date("2025-05-16T00:00:00"); // 修改你的開始時間
+    const end = new Date("2025-05-16T23:59:59");   // 修改你的結束時間
     const fromUtc = start.getTime();
     const toUtc = end.getTime();
-    */
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const fromUtc = new Date(today).getTime();
-    const to = new Date(today);
-    to.setDate(today.getDate() + 1);
-    const toUtc = new Date(to).getTime();
-
 
     const panelId = this.selectedChart === 'KW' ? 11 : 10;
-
+  
     this.chartTitle = this.selectedChart === 'KW'
       ? '即時用電資訊與基線'
       : '即時負載資訊與基線';
 
-    this.api.getGrafanaEmbedUrl(panelId, fromUtc, toUtc).subscribe({
+    // [修改 2] 在呼叫 api 時，把 DASHBOARD_UID 放在第一個參數傳進去
+    // (前提是你的 api.service.ts 已經改好接收 uid 參數了)
+    this.api.getGrafanaEmbedUrl(this.DASHBOARD_UID, panelId, fromUtc, toUtc).subscribe({
       next: (res) => {
+
         if (res?.url) {
           this.grafanaChartUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.url);
         } else {

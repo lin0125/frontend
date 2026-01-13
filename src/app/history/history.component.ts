@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
   styleUrls: ['./history.component.scss']
 })
 export class HistoryComponent implements OnInit, OnDestroy {
+  private readonly HISTORY_UID = 'a84a4847-074d-44c1-a443-30f57410b129';
   private destroy$ = new Subject<void>();
   selectedDataset: 'RT' | 'PWH' = 'RT';
   grafanaUrl!: SafeResourceUrl;
@@ -21,8 +22,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
   totalSaved = 0;
 
 
-  startDate = this.toDatetimeLocalString(new Date("2025-05-12T00:00:00"));
-  endDate = this.toDatetimeLocalString(new Date("2025-05-13T00:00:00"));
+  startDate = this.toDatetimeLocalString(new Date("2024-08-20T00:00:00"));
+  endDate = this.toDatetimeLocalString(new Date("2024-08-21T00:00:00"));
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -64,14 +65,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
     const to = new Date(this.endDate).getTime();
     const panelId = this.selectedDataset === 'RT' ? 10 : 11;
 
-    this.api.getGrafanaEmbedUrl(panelId, from, to).subscribe({
+    // [修改] 這裡補上第一個參數 this.HISTORY_UID
+    this.api.getGrafanaEmbedUrl(this.HISTORY_UID, panelId, from, to).subscribe({
       next: (res) => {
         console.log(res);
         console.log(res.url);
         this.grafanaUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.url);
       },
       error: (e) => {
-        console.log(e);
+        console.log(e)
         console.warn('⚠️ 無法取得圖表連結');
       }
     });
