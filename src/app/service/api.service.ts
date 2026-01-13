@@ -1,45 +1,33 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
-import { GrafanaApiService } from './grafana-api.service';
+import { Observable } from 'rxjs';
 import { getAppConfig } from '../global';
-import { get } from 'http';
-
-
-// http://10.25.1.191:4243'
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private BASE_URL = getAppConfig()?.apiBaseUrl || 'http://localhost:8000';
+  // 修正重點：
+  // 1. Port 改為 8080 (配合你的 application.properties)
+  // 2. 使用 nip.io 網址 (這樣手機連線時才不會連到手機自己)
+  private BASE_URL = 'http://localhost:8080';
+  
   private counter = 0;
 
   constructor(private http: HttpClient) {}
 
+  // Google 登入驗證
+  googleLogin(googleToken: string): Observable<any> {
+    // 這會呼叫 http://10.25.2.130.nip.io:8080/api/v1/auth/google
+    return this.http.post(`${this.BASE_URL}/api/v1/auth/google`, { googleToken });
+  }
 
-  getGrafanaEmbedUrl(
-    panelId: number,
-    from: number,
-    to: number,
-    theme: 'light' | 'dark' = 'light'
-  ): Observable<{ url: string }> {
+  getGrafanaEmbedUrl(panelId: number, from: number, to: number, theme: 'light' | 'dark' = 'light'): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`${this.BASE_URL}/grafana-embed`, {
-      params: {
-        panelId: panelId.toString(),
-        from: from.toString(),
-        to: to.toString(),
-        theme
-      }
+      params: { panelId: panelId.toString(), from: from.toString(), to: to.toString(), theme }
     });
   }
 
-  googleLogin(googleToken: string): Observable<any> {
-  // 對應 Swagger 中的 /api/v1/auth/google
-  return this.http.post(`${this.BASE_URL}/api/v1/auth/google`, { googleToken });
-  }
-
   getDashboardData(): Observable<any> {
-    this.counter+= 1;
-
+    this.counter += 1;
     return this.http.get(`${this.BASE_URL}/getDashboardData?ts=${this.counter}`);
   }
 
@@ -48,9 +36,7 @@ export class ApiService {
   }
 
   getChillerParam(chiller_id: number): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getChillerParam`, {
-      params: { chiller_id }
-    });
+    return this.http.get(`${this.BASE_URL}/getChillerParam`, { params: { chiller_id } });
   }
 
   updateChillerParam(body: any): Observable<any> {
@@ -61,69 +47,16 @@ export class ApiService {
     return this.http.post(`${this.BASE_URL}/updateChillerModel`, formData);
   }
 
-  // 新增：列出模型
   listModels(type: 'RT' | 'PW' = 'RT'): Observable<{ type: string; active?: string; files: string[] }> {
     const params = new HttpParams().set('type', type);
-    return this.http.get<{ type: string; active?: string; files: string[] }>(
-      `${this.BASE_URL}/listModels`,
-      { params }
-    );
+    return this.http.get<{ type: string; active?: string; files: string[] }>(`${this.BASE_URL}/listModels`, { params });
   }
 
-  // 新增：切換啟用
   selectModel(type: 'RT' | 'PW', filename: string): Observable<any> {
     return this.http.post(`${this.BASE_URL}/selectModel`, { type, filename });
   }
 
-
   getHistoryData(data_type: string, start_time: string, end_time: string): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getHistoryData`, {
-      params: { data_type, start_time, end_time }
-    });
+    return this.http.get(`${this.BASE_URL}/getHistoryData`, { params: { data_type, start_time, end_time } });
   }
 }
-
-
-/*
-@Injectable({ providedIn: 'root' })
-export class ApiService {
-  private readonly BASE_URL = '/api';
-
-  constructor(private http: HttpClient, private grafana: GrafanaApiService) {}
-
-  getDashboardData(count: number): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getDashboardData`, {
-      params: { count }
-    });
-  }
-
-  getChillersData(): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getChillersData`);
-  }
-
-  getChillerParam(chiller_id: number): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getChillerParam`, {
-      params: { chiller_id }
-    });
-  }
-
-  updateChillerParam(body: any): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/updateChillerParam`, body);
-  }
-
-  updateChillerModel(formData: FormData): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/updateChillerModel`, formData);
-  }
-
-
-  test_getHistoryData(data_type: string, start_time: string, end_time: string): Observable<any> {
-    return this.grafana.queryGrafana(data_type, start_time,end_time);
-  }
-  getHistoryData(data_type: string, start_time: string, end_time: string): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/getHistoryData`, {
-      params: { data_type, start_time, end_time }
-    });
-  }
-}
-
-*/
