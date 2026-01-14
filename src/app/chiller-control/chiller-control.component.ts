@@ -98,45 +98,39 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
   tryRefreshData(): void {
     this.isLoading = true;
 
-
     forkJoin({
-      Params: this.api.getChillerParam(1),
+      Params: this.api.getChillerParams(),
       dataChiller: this.api.getChillersData(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ Params, dataChiller }) => {
+          // 1. 處理左側參數設定
           if (!this.userHasEditedParams) {
             this.lowerLimit = Params.min_temperature;
             this.upperLimit = Params.max_temperature;
             this.baseTemp = Params.base_temperature;
             this.maxStep = Params.temp_step;
             this.updateRate = Params.update_rate;
-            if ("control_start_time" in Params && Params.control_start_time !== null && Params.control_start_time !== undefined) 
-              this.controlStartTime = Params.control_start_time;
-            else 
-              this.controlStartTime = 0;
+            this.controlStartTime = Params.control_start_time ?? 0;
           }
 
-          const temps = dataChiller.chillers_temperature || [];
-          const activeIds: number[] = dataChiller.online_chiller_id || [];
+          // 從 dataChiller 讀取資料
+          const t1 = dataChiller.Chiller_1_Temp ?? 0;
+          const t2 = dataChiller.Chiller_2_Temp ?? 0;
+          const activeIds: string[] = dataChiller.Online_Chiller_ID || [];
 
-          const [temp1, temp2] = temps.map((t: number | undefined) => +(t ?? 0).toFixed(2));
-          this.currentControlTemp = temp1;
-          if (temp1 == 0)
-            this.currentControlTemp = '-- ';
+          // 更新 UI 顯示 ( '--' 代表沒開機)
+          this.chillerTemps[0] = activeIds.includes('1') ? `${t1.toFixed(2)}` : '-- ';
+          this.chillerTemps[1] = activeIds.includes('2') ? `${t2.toFixed(2)}` : '-- ';
 
-          if (activeIds.length > 1) {
-            this.chillerTemps[0] = `${temp1}`;
-            this.chillerTemps[1] = `${temp2}`;
+          // 設定控制溫度 (Ntemp)：如果 1 號開就顯示 1 號，否則顯示 2 號
+          if (activeIds.includes('1')) {
+            this.currentControlTemp = `${t1.toFixed(2)}`;
+          } else if (activeIds.includes('2')) {
+            this.currentControlTemp = `${t2.toFixed(2)}`;
           } else {
-            if (activeIds[0] === 1) {
-              this.chillerTemps[0] = `${temp1}`;
-              this.chillerTemps[1] = '-- ';
-            }else if (activeIds[0] === 2) {
-              this.chillerTemps[1] = `${temp1}`;
-              this.chillerTemps[0] = '-- ';
-            }
+            this.currentControlTemp = '-- ';
           }
 
           this.activeChiller = activeIds.length
@@ -145,7 +139,7 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.warn('❌ 冰機資料讀取失敗', err);
-          this.activeChiller = `冰機 --`;
+          this.activeChiller = `連線異常`;
         },
         complete: () => {
           this.isLoading = false;
@@ -163,13 +157,15 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
       control_start_time: this.controlStartTime,
     };
 
-    this.api.updateChillerParam(body).subscribe({
-      next: (res) => {
-        if (res?.Contents === 'success') {
+    this.api.updateChillerParams(body).subscribe({
+      next: (res: any) => { // ✅ 加上 : any 解決隱含型別錯誤
+        // 注意：如果你後端回傳的 JSON 結構變了 (例如變成 { message: "..." })，這裡的判斷也要改
+        // 假設後端現在回傳 { message: "設定更新成功" }
+        if (res?.message || res?.Contents === 'success') {
           alert('✅ 參數更新成功');
           this.userHasEditedParams = false;
         } else {
-          alert('❌ 參數更新失敗（伺服器錯誤）');
+          alert('❌ 參數更新失敗（伺服器回應異常）');
         }
       },
       error: () => alert('❌ 網路錯誤，更新失敗'),

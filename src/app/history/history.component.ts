@@ -86,13 +86,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
     this.api.getHistoryData(data_type, start_time, end_time).subscribe({
       next: (res) => {
+        // [修正] 直接讀取後端回傳的真實統計值，不再使用模擬公式
         this.analysis = {
-          avg: parseFloat(res.data_average.toFixed(2)),
-          min: parseFloat((res.data_average - 5).toFixed(2)), // 模擬
-          max: parseFloat(res.data_max.toFixed(2)),
-          std: parseFloat(((res.data_max - res.data_average) / 2).toFixed(2))
+          avg: this.formatValue(res.data_average),
+          min: this.formatValue(res.data_min),
+          max: this.formatValue(res.data_max),
+          std: this.formatValue(res.data_std)
         };
-        this.totalSaved = parseFloat(res.carbon_reduction.toFixed(2));
+        // 讀取後端算好的節能量
+        this.totalSaved = this.formatValue(res.carbon_reduction);
       },
       error: (err) => {
         console.error('❌ 歷史資料載入失敗', err);
@@ -100,6 +102,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
         this.totalSaved = 0;
       }
     });
+  }
+  // 建議新增一個小工具方法來統一處理小數點，讓程式碼更整潔
+  private formatValue(val: any): number {
+    // 確保 val 是數字，如果是 undefined 或 null 則回傳 0
+    const num = Number(val); 
+    return isNaN(num) ? 0 : parseFloat(num.toFixed(2));
   }
 
   toDatetimeLocalString(date: Date): string {
