@@ -105,45 +105,39 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ Params, dataChiller }) => {
-          // 1. 處理左側參數設定
           if (!this.userHasEditedParams) {
-            this.lowerLimit = Params.min_temperature;
-            this.upperLimit = Params.max_temperature;
-            this.baseTemp = Params.base_temperature;
-            this.maxStep = Params.temp_step;
-            this.updateRate = Params.update_rate;
+            this.lowerLimit = Params.min_temperature;    // 控制溫度下限
+            this.upperLimit = Params.max_temperature;    // 控制溫度上限
+            this.baseTemp = Params.base_temperature;     // 每日初始溫度
+            this.maxStep = Params.temp_step;             // 最大調整量
+            this.updateRate = Params.update_rate;        // 更新頻率
             this.controlStartTime = Params.control_start_time ?? 0;
           }
+        // 1. 強制轉為字串陣列處理
+        const activeIds: string[] = (dataChiller.Online_Chiller_ID || []).map((id: any) => id.toString());
+        const t1 = dataChiller.Chiller_1_Temp ?? 0;
+        const t2 = dataChiller.Chiller_2_Temp ?? 0;
 
-          // 從 dataChiller 讀取資料
-          const t1 = dataChiller.Chiller_1_Temp ?? 0;
-          const t2 = dataChiller.Chiller_2_Temp ?? 0;
-          const activeIds: string[] = dataChiller.Online_Chiller_ID || [];
+        // 2. 只有在 activeIds 裡面的機台才顯示溫度
+        this.chillerTemps[0] = activeIds.includes('1') ? `${t1.toFixed(2)}` : '-- ';
+        this.chillerTemps[1] = activeIds.includes('2') ? `${t2.toFixed(2)}` : '-- ';
 
-          // 更新 UI 顯示 ( '--' 代表沒開機)
-          this.chillerTemps[0] = activeIds.includes('1') ? `${t1.toFixed(2)}` : '-- ';
-          this.chillerTemps[1] = activeIds.includes('2') ? `${t2.toFixed(2)}` : '-- ';
-
-          // 設定控制溫度 (Ntemp)：如果 1 號開就顯示 1 號，否則顯示 2 號
-          if (activeIds.includes('1')) {
-            this.currentControlTemp = `${t1.toFixed(2)}`;
-          } else if (activeIds.includes('2')) {
-            this.currentControlTemp = `${t2.toFixed(2)}`;
-          } else {
-            this.currentControlTemp = '-- ';
-          }
-
-          this.activeChiller = activeIds.length
-            ? activeIds.map((id) => `冰機 ${id}`).join('，')
-            : '無啟動冰機';
+        // 3. 更新中央的「控制溫度」(Ntemp)
+        // 如果機台 2 有開，顯示機台 2 的 SP (10.80)
+        if (activeIds.includes('1')) {
+          this.currentControlTemp = `${t1.toFixed(2)}`;
+        } else if (activeIds.includes('2')) {
+          this.currentControlTemp = `${t2.toFixed(2)}`;
+        } else {
+          this.currentControlTemp = '-- ';
+        } 
+        this.activeChiller = activeIds.length
+          ? activeIds.map((id) => `冰機 ${id}`).join('，')
+          : '無啟動冰機';
         },
         error: (err) => {
-          console.warn('❌ 冰機資料讀取失敗', err);
-          this.activeChiller = `連線異常`;
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
+          console.error('❌ API 呼叫失敗:', err);
+        }
       });
   }
 
