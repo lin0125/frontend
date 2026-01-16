@@ -68,7 +68,7 @@
   <div class="model-version">
     <i class="fas fa-brain icon"></i>
     <div class="label">目前啟用模型</div>
-    <div class="value">{{ mmActiveModel || '尚未指定（預設最新）' }}</div>
+    <div class="value">{{ mmActiveModel?.name || '尚未指定（預設最新）' }}</div>
   </div>
 
   <!-- 兩欄操作區：上傳 / 切換 -->
@@ -119,8 +119,8 @@
         class="select-control"
         [(ngModel)]="mmSelectedModel"
         [disabled]="(mmModels?.length || 0) === 0 || mmApplying || mmUploading || mmLoadingList">
-        <option *ngFor="let m of mmModels" [value]="m">
-          {{ m }} {{ m === mmActiveModel ? '（啟用中）' : '' }}
+        <option *ngFor="let m of mmModels" [value]="m.name">
+          {{ m.name }} {{ m === mmActiveModel ? '（啟用中）' : '' }}
         </option>
       </select>
 

@@ -1,8 +1,8 @@
-import { Injectable, Inject, PLATFORM_ID, Optional } from '@angular/core'; // 1. 加入 Optional
+import { Injectable, Inject, PLATFORM_ID, Optional } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
-import { SocialAuthService } from '@abacritt/angularx-social-login'; // 2. 引入 SocialAuthService
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Injectable({
   providedIn: 'root'
@@ -11,53 +11,56 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
   public isLoggedIn$ = this.loggedIn.asObservable();
 
+  // 🟢 新增：角色的狀態管理
+  private roleSubject = new BehaviorSubject<string | null>(null);
+  public userRole$ = this.roleSubject.asObservable();
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
     @Optional() private socialAuthService: SocialAuthService 
   ) {
-    // === 方法二修正版：每次刷新都強制視為【未登入】並踢回首頁 ===
     if (isPlatformBrowser(this.platformId)) {
-      // 1. 清除 Token
+      // 刷新時初始化清空
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('user_role'); // 🟢 新增：清空角色
       
-      // 2. 更新狀態為 False
       this.loggedIn.next(false);
+      this.roleSubject.next(null); // 🟢 新增：重設角色狀態
 
-      // 3. 【關鍵修正】強制跳轉回登入頁
-      // 使用 setTimeout 確保 Angular 初始化完成後才執行跳轉
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 0);
     }
   }
 
-  loginSuccess(token?: string) {
+  // 🟢 修改：支援傳入角色
+  loginSuccess(token?: string, role?: string) {
     if (isPlatformBrowser(this.platformId)) {
-      if (token) {
-        localStorage.setItem('jwt_token', token);
+      if (token) localStorage.setItem('jwt_token', token);
+      if (role) {
+        localStorage.setItem('user_role', role); // 🟢 保存角色
+        this.roleSubject.next(role);             // 🟢 更新 Subject
       }
     }
     this.loggedIn.next(true);
     this.router.navigate(['/dashboard']);
   }
 
-  // 4. 修改 logout 方法
   logout() {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('jwt_token');
+      localStorage.removeItem('user_role'); // 🟢 新增：移除角色存檔
       
-      // 這裡呼叫 Google 登出
-      // 檢查 socialAuthService 是否存在 (避免 SSR 報錯)
       if (this.socialAuthService) {
         this.socialAuthService.signOut().catch(err => {
-            // 即使 Google 登出失敗 (例如使用者本來就沒登入 Google)，我們也要繼續執行本地登出
             console.log('Google signOut completed or failed (ignoring):', err);
         });
       }
     }
     
     this.loggedIn.next(false);
+    this.roleSubject.next(null); // 🟢 新增：清空角色狀態通知
     this.router.navigate(['/login']);
   }
 

@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, model, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../service/api.service';
@@ -10,6 +10,7 @@ class Example {
   b = 20;
 }
 
+type modeldata = { category: "RT" | "PW"; id: number; is_active: boolean; name: string; version: string; };
 
 
 @Component({
@@ -28,8 +29,8 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
 
   modelPath = 'chiller.model';
   mmModelType: 'RT' | 'PW' = 'RT';
-  mmModels: string[] = [];
-  mmActiveModel?: string;
+  mmModels: modeldata[] = [];
+  mmActiveModel?: modeldata;
   mmSelectedModel?: string;
 
   mmLoadingList = false;
@@ -194,8 +195,9 @@ export class ChillerControlComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.mmModels = res?.files || [];
         this.mmActiveModel = res?.active || undefined;
-        this.mmSelectedModel = this.mmActiveModel || this.mmModels.at(-1);
+        this.mmSelectedModel = this.mmActiveModel?.name || this.mmModels.at(0)?.name;
         this.mmLoadingList = false;
+        console.log('模型清單：', res);
       },
       error: (err) => {
         this.mmLoadingList = false;

@@ -1,0 +1,63 @@
+<div class="management-container">
+  <header class="page-header">
+    <h1><i class="fas fa-user-shield"></i> 使用者權限管理</h1>
+    <p>管理系統存取權限，分配 admin、user 或 other 角色</p>
+  </header>
+
+  <div class="content-grid">
+    <section class="card add-user-card">
+      <div class="card-header">
+        <h3><i class="fas fa-plus-circle"></i> 新增授權人員</h3>
+      </div>
+      <form class="auth-form" (ngSubmit)="onAddUser()">
+        <div class="form-group">
+          <label for="email">Google 電子郵件</label>
+          <input type="email" id="email" [(ngModel)]="newUser.email" name="email" placeholder="example@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">分配角色</label>
+          <select id="role" [(ngModel)]="newUser.role" name="role">
+            <option value="user">一般使用者 (可操作智慧控制)</option>
+            <option value="admin">管理員 (完整權限)</option>
+            <option value="other">訪客 (僅供檢視)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary">確認添加</button>
+      </form>
+    </section>
+
+    <section class="card user-list-card">
+      <div class="card-header">
+        <h3><i class="fas fa-list"></i> 已授權人員名單</h3>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>電子郵件</th>
+              <th>目前角色</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of userList">
+              <td>{{ user.userEmail }}</td>
+              <td>
+                <span class="role-badge" [ngClass]="user.role">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>
+                <button class="btn-icon delete" (click)="removeUser(user.userEmail)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

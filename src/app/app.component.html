@@ -22,8 +22,12 @@
             <span class="text" *ngIf="!isNavClosed">歷史記錄 </span>
           </li>
           
-          <li [routerLink]="'/chiller-control'" routerLinkActive="active">
-            <span class="text" *ngIf="!isNavClosed">智慧控制 </span>
+          <li [routerLink]="'/chiller-control'" routerLinkActive="active" *ngIf="userRole === 'admin' || userRole === 'user'">
+            <span class="text" *ngIf="!isNavClosed">智慧控制</span>
+          </li>
+
+          <li [routerLink]="'/user-management'" routerLinkActive="active" *ngIf="userRole === 'admin'">
+            <span class="text" *ngIf="!isNavClosed">使用者管理</span>
           </li>
 
           <li (click)="logout()" style="cursor: pointer;" class="logout-item">

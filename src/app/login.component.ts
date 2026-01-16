@@ -47,17 +47,20 @@ export class LoginComponent implements OnInit {
   this.apiService.googleLogin(token).subscribe({
     next: (res: any) => {
       console.log('✅ 後端回應:', res);
-      const jwt = res.data?.token || res.token || (res.data && typeof res.data === 'string' ? res.data : null);
       
-      if (jwt) {
-        // 🔴 錯誤寫法 (請刪除或是修改這行)
-        // this.authService.setLoginStatus(true, jwt); 
+      // 1. 提取 JWT Token (根據您後端的 CommonResponse 結構，通常在 res.data.token)
+      const jwt = res.data?.token;
+      
+      // 2. 提取角色資訊 (對應後端 UserImpl.java 中的 data.put("userRole", userToProcess.getRole()))
+      const role = res.data?.userRole; 
 
-        // 🟢 正確寫法 (請改成這樣)
-        this.authService.loginSuccess(jwt); 
+      if (jwt) {
+        console.log('取得角色:', role);
         
-        // 注意：loginSuccess 裡面已經有寫 router.navigate(['/dashboard']) 了
-        // 所以這裡不用再寫一次 navigate
+        // 3. 呼叫更新後的 loginSuccess，同時傳入 token 與 role
+        // 這會觸發 AuthService 中的 roleSubject，進而更新側邊欄的顯示狀態
+        this.authService.loginSuccess(jwt, role); 
+        
       } else {
         console.error('後端回應成功但沒有 Token');
       }

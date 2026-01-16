@@ -2,6 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+type modeldata = { category: "RT" | "PW"; id: number; is_active: boolean; name: string; version: string; };
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private BASE_URL = 'http://localhost:8080';
@@ -10,10 +12,10 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Google Login (維持原樣)
-  googleLogin(googleToken: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/api/v1/auth/google`, { googleToken });
-  }
+  // service/api.service.ts 示例
+googleLogin(idToken: string) {
+  return this.http.post('/api/v1/auth/google', { googleToken: idToken });
+}
 
   // Grafana (維持原樣)
   getGrafanaEmbedUrl(uid: string, panelId: number, from: number, to: number, theme: 'light' | 'dark' = 'light'): Observable<{ url: string }> {
@@ -73,10 +75,11 @@ export class ApiService {
   updateChillerModel(formData: FormData): Observable<any> {
     return this.http.post(`${this.BASE_URL}/updateChillerModel`, formData);
   }
+  
 
-  listModels(type: 'RT' | 'PW' = 'RT'): Observable<{ type: string; active?: string; files: string[] }> {
+  listModels(type: 'RT' | 'PW' = 'RT'): Observable<{ type: string; active?: modeldata; files: modeldata[] }> {
     const params = new HttpParams().set('type', type);
-    return this.http.get<{ type: string; active?: string; files: string[] }>(`${this.BASE_URL}/listModels`, { params });
+    return this.http.get<{ type: string; active?: modeldata; files: modeldata[] }>(`${this.BASE_URL}/listModels`, { params });
   }
 
   selectModel(type: 'RT' | 'PW', filename: string): Observable<any> {

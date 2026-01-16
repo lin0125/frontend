@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet, Router } from '@angular/router'; // 注入 Router
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './service/auth.service';
 import { Observable } from 'rxjs';
 
@@ -13,18 +13,19 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   isNavClosed = false;
-  isLoggedIn = false;
-  isLoggedIn$: Observable<boolean>; // 定義一個 Observable
+  isLoggedIn$: Observable<boolean>;
+  // 新增：用來存儲當前角色的變數
+  userRole: string | null = null;
 
   constructor(private authService: AuthService) {
-    // 綁定 AuthService 的狀態
     this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
 
   ngOnInit() {
-    // 訂閱登入狀態
-    this.authService.isLoggedIn$.subscribe((status: boolean) => {
-      this.isLoggedIn = status;
+    // 訂閱角色狀態，以便在 HTML 中使用 currentUserRole 判斷權限
+    // 假設您的 AuthService 中有一個 userRole$ 的 Observable
+    this.authService.userRole$.subscribe((role: string | null) => {
+      this.userRole = role;
     });
   }
 
@@ -32,8 +33,8 @@ export class AppComponent implements OnInit {
     this.isNavClosed = !this.isNavClosed;
   }
 
-  // 修正點：新增 logout 方法
   logout() {
     this.authService.logout();
+    this.userRole = null; // 登出時清空角色
   }
 }
