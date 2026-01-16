@@ -1,7 +1,7 @@
 <div class="management-container">
   <header class="page-header">
     <h1><i class="fas fa-user-shield"></i> 使用者權限管理</h1>
-    <p>管理系統存取權限，分配 admin、user 或 other 角色</p>
+    <p>管理系統存取權限 USER</p>
   </header>
 
   <div class="content-grid">
@@ -16,12 +16,17 @@
         </div>
 
         <div class="form-group">
-          <label for="role">分配角色</label>
-          <select id="role" [(ngModel)]="newUser.role" name="role">
-            <option value="user">一般使用者 (可操作智慧控制)</option>
-            <option value="admin">管理員 (完整權限)</option>
-            <option value="other">訪客 (僅供檢視)</option>
-          </select>
+            <label for="role">職位名稱</label>
+            <input 
+                type="text" 
+                id="role" 
+                class="form-control" 
+                [(ngModel)]="newUser.role" 
+                name="role" 
+                placeholder="例如：維修工程師"
+                required
+            >
+            <small class="text-muted">註：請輸入該人員的職稱或權限註記</small>
         </div>
 
         <button type="submit" class="btn-primary">確認添加</button>
