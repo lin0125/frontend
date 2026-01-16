@@ -3,8 +3,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HistoryComponent } from './history/history.component';
 import { LoginComponent } from './login.component';
 import { ChillerControlComponent } from './chiller-control/chiller-control.component';
-// 1. 匯入新組件
-import { UserManagementComponent } from './user-management/user-management.component';
+import { UserManagementComponent } from './user_management/user-management.component';
+
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },

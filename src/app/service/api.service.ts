@@ -17,6 +17,22 @@ googleLogin(idToken: string) {
   return this.http.post('/api/v1/auth/google', { googleToken: idToken });
 }
 
+// 1. 新增獲取授權人員名單的方法
+  getField() {
+    return this.http.get(`${this.apiUrl}/api/v1/get/field`); // 確保 apiUrl 正確
+  }
+
+  // 2. 新增添加人員權限的方法
+  addField(data: { email: string; role: string }) {
+    return this.http.post(`${this.apiUrl}/api/v1/add/field`, data); // 呼叫後端接口
+  }
+
+  // 3. (建議) 新增刪除人員的方法（對應 HTML 的 removeUser）
+  // 注意：後端需要有對應的 Delete 接口
+  deleteField(email: string) {
+    return this.http.delete(`${this.apiUrl}/api/v1/delete/field/${email}`);
+  }
+
   // Grafana (維持原樣)
   getGrafanaEmbedUrl(uid: string, panelId: number, from: number, to: number, theme: 'light' | 'dark' = 'light'): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`${this.BASE_URL}/api/grafana-embed`, {
