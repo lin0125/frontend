@@ -4,7 +4,7 @@ import { AuthService } from '../service/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.getToken();
+  const token = localStorage.getItem('jwt_token');
 
   // 1. 如果請求已經有 Authorization Header (例如 Grafana API)，則不覆蓋
   if (req.headers.has('Authorization')) {
@@ -17,14 +17,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // 3. 如果有 Token，就 Clone 請求並加上 Header
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(cloned);
-  }
+ if (token) {
+  req = req.clone({
+    setHeaders: { Authorization: `Bearer ${token}` }
+  });
+}
 
   // 4. 沒有 Token 則維持原樣
   return next(req);

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './service/auth.service';
 
+
 export class AppComponent implements OnInit {
   userRole: string | null = null; // 用於 HTML 判斷
 

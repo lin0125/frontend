@@ -10,7 +10,7 @@ import { ApiService } from '../service/api.service'; // 使用現有的 ApiServi
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
-eexport class UserManagementComponent implements OnInit {
+export class UserManagementComponent implements OnInit {
   newUser = { email: '', role: 'user' };
   userList: any[] = [];
 

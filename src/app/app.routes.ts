@@ -5,7 +5,6 @@ import { LoginComponent } from './login.component';
 import { ChillerControlComponent } from './chiller-control/chiller-control.component';
 import { UserManagementComponent } from './user_management/user-management.component';
 
-
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },

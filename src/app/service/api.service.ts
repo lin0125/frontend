@@ -1,12 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_URL } from '../global';
 
 type modeldata = { category: "RT" | "PW"; id: number; is_active: boolean; name: string; version: string; };
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private BASE_URL = 'http://localhost:8080';
+  private apiUrl = API_URL; // 宣告並賦值
+  
   
   private counter = 0;
 
@@ -17,18 +20,14 @@ googleLogin(idToken: string) {
   return this.http.post('/api/v1/auth/google', { googleToken: idToken });
 }
 
-// 1. 新增獲取授權人員名單的方法
-  getField() {
-    return this.http.get(`${this.apiUrl}/api/v1/get/field`); // 確保 apiUrl 正確
+getField() {
+    return this.http.get(`${this.apiUrl}/api/v1/get/field`); // 現在可以使用 this.apiUrl 了
   }
 
-  // 2. 新增添加人員權限的方法
   addField(data: { email: string; role: string }) {
-    return this.http.post(`${this.apiUrl}/api/v1/add/field`, data); // 呼叫後端接口
+    return this.http.post(`${this.apiUrl}/api/v1/add/field`, data);
   }
 
-  // 3. (建議) 新增刪除人員的方法（對應 HTML 的 removeUser）
-  // 注意：後端需要有對應的 Delete 接口
   deleteField(email: string) {
     return this.http.delete(`${this.apiUrl}/api/v1/delete/field/${email}`);
   }
