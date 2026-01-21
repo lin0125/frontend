@@ -74,7 +74,7 @@
       border-left: 4px solid transparent;
 
       &:hover {
-        background-color: lighten($highlight-color, 42%);
+        background-color: color.adjust($highlight-color, $lightness: 42%);;
       }
 
       &.active {
